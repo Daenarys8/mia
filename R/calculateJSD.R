@@ -24,10 +24,14 @@
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the JSD calculation should be parallelized.
-#'
+#'   
 #' @param chunkSize an integer scalar, defining the size of data send
 #'   to the individual worker. Only has an effect, if \code{BPPARAM} defines
-#'   more than one worker. (default: \code{chunkSize = nrow(x)})
+#'   more than one worker. (default: \code{chunkSize = nrow(x)})(Alias for chunk.size. Please use chunk.size instead)
+#'
+#' @param chunk.size an integer scalar, defining the size of data send
+#'   to the individual worker. Only has an effect, if \code{BPPARAM} defines
+#'   more than one worker. (default: \code{chunk.size = nrow(x)})
 #'
 #' @param ... optional arguments not used.
 #'
@@ -124,16 +128,18 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runJSD <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x)){
+runJSD <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x), chunk.size = chunkSize ){
+    .Deprecated(old="chunkSize", new="chunk.size", 
+                "Now chunkSize is deprecated. Use chunk.size instead.")
     # input check
     if(is.null(rownames(x))){
         rownames(x) <- seq_len(nrow(x))
     }
-    if(missing(chunkSize) || is.na(chunkSize) || is.null(chunkSize) ||
-       !is.integer(chunkSize)){
-        chunkSize <- nrow(x)
-    } else if(length(chunkSize) != 1L) {
-        chunkSize <- chunkSize[1L]
+    if(missing(chunk.size) || is.na(chunk.size) || is.null(chunk.size) ||
+       !is.integer(chunk.size)){
+        chunk.size <- nrow(x)
+    } else if(length(chunk.size) != 1L) {
+        chunk.size <- chunk.size[1L]
     }
     #
     old <- getAutoBPPARAM()
@@ -149,7 +155,7 @@ runJSD <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x)){
     spn <- utils::combn(rownames(x), 2, simplify = TRUE)
     #
     N <- ncol(spn)
-    f <- ceiling(seq_len(N)/chunkSize)
+    f <- ceiling(seq_len(N)/chunk.size)
     A <- split(spn[1L,], f)
     B <- split(spn[2L,], f)
     FUN <- function(X, a, b){

@@ -161,8 +161,8 @@ test_that("Importing Mothur files yield SummarizedExperiment objects", {
     expect_s4_class(se2, "SummarizedExperiment")
     expect_error(loadFromMothur(counts, meta))
     expect_error(loadFromMothur(counts, meta))
-    se <- loadFromMothur(counts, designFile = meta)
-    se2 <- loadFromMothur(counts, designFile = meta)
+    se <- loadFromMothur(counts, design.file = meta)
+    se2 <- loadFromMothur(counts, design.file = meta)
     expect_s4_class(se, "SummarizedExperiment")
     expect_s4_class(se2, "SummarizedExperiment")
     se <- loadFromMothur(counts, taxa, meta)
@@ -218,15 +218,15 @@ test_that("Importing Mothur files yield SummarizedExperiment objects", {
                           c("group", "sex", "age", "drug", "label", "numOtus", "Group"))
 })
 
-featureTableFile <- system.file("extdata", "table.qza", package = "mia")
-taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
-sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
-refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
+feature.table.file <- system.file("extdata", "table.qza", package = "mia")
+taxonomy.table.file <- system.file("extdata", "taxonomy.qza", package = "mia")
+sample.meta.file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+ref.seq.file <- system.file("extdata", "refseq.qza", package = "mia")
 
 test_that("make TSE worked properly while no sample or taxa data", {
     skip_if_not(require("biomformat", quietly = TRUE))
     ## no sample data or taxa data
-    expect_silent(tse <- loadFromQIIME2(featureTableFile))
+    expect_silent(tse <- loadFromQIIME2(feature.table.file))
     expect_s4_class(tse, "TreeSummarizedExperiment")
     expect_equal(dim(tse), c(770,34))
 })
@@ -235,22 +235,22 @@ test_that("reference sequences of TSE", {
     skip_if_not(require("biomformat", quietly = TRUE))
     # 1. fasta file of refseq
     tse <- loadFromQIIME2(
-        featureTableFile,
-        refSeqFile = refSeqFile
+        feature.table.file,
+        ref.seq.file = ref.seq.file
     )
     tse2 <-  loadFromQIIME2(
-        featureTableFile,
-        refSeqFile = refSeqFile,
-        featureNamesAsRefseq = FALSE
+        feature.table.file,
+        ref.seq.file = ref.seq.file,
+        feature.names.as.ref.seq  = FALSE
     )
-    expect_identical(tse@referenceSeq, readQZA(refSeqFile))
-    expect_identical(tse2@referenceSeq, readQZA(refSeqFile))
+    expect_identical(tse@referenceSeq, readQZA(ref.seq.file))
+    expect_identical(tse2@referenceSeq, readQZA(ref.seq.file))
 
     # 2. row.names of feature table as refseq
     # 2.1 element of row.names of feature table is not DNA sequence
     tse <- loadFromQIIME2(
-        featureTableFile,
-        featureNamesAsRefseq = TRUE
+        feature.table.file,
+        feature.names.as.ref.seq  = TRUE
     )
     expect_null(tse@referenceSeq)
 
@@ -259,7 +259,7 @@ test_that("reference sequences of TSE", {
     # codes used for create sample data (donot run)
     if (FALSE) {
         .require_package("biomformat")
-        feature_tab <- readQZA(featureTableFile)
+        feature_tab <- readQZA(feature.table.file)
         n_feature <- nrow(feature_tab)
         random_seq <- sapply(
             rep(20, n_feature),
@@ -287,31 +287,31 @@ test_that("reference sequences of TSE", {
         package = "mia"
     )
 
-    # featureNamesAsRefseq is TRUE, refSeqFile is NULL, set row.names of
+    # feature.names.as.ref.seq  is TRUE, ref.seq.file is NULL, set row.names of
     # feature table as reference sequences
     tse <- loadFromQIIME2(
         featureTableFile2,
-        featureNamesAsRefseq = TRUE
+        feature.names.as.ref.seq  = TRUE
     )
     feature_tab <- readQZA(featureTableFile2)
     names_seq <- Biostrings::DNAStringSet(row.names(feature_tab))
     names(names_seq) <- paste0("seq_", seq_along(names_seq))
     expect_identical(tse@referenceSeq, names_seq)
 
-    # refSeqFile is not NULL, featureNamesAsRefseq is TRUE,
-    # set the sequences from refSeqFile as reference sequences
+    # ref.seq.file is not NULL, feature.names.as.ref.seq  is TRUE,
+    # set the sequences from ref.seq.file as reference sequences
     tse <- loadFromQIIME2(
         featureTableFile2,
-        featureNamesAsRefseq = TRUE,
-        refSeqFile = refSeqFile
+        feature.names.as.ref.seq  = TRUE,
+        ref.seq.file = ref.seq.file
     )
-    expect_identical(tse@referenceSeq, readQZA(refSeqFile))
+    expect_identical(tse@referenceSeq, readQZA(ref.seq.file))
 
-    # 3. refSeqFile = NULL, featureNamesAsRefseq = FALSE
+    # 3. ref.seq.file = NULL, feature.names.as.ref.seq  = FALSE
     tse <- loadFromQIIME2(
-        featureTableFile,
-        refSeqFile = NULL,
-        featureNamesAsRefseq = FALSE
+        feature.table.file,
+        ref.seq.file = NULL,
+        feature.names.as.ref.seq  = FALSE
     )
     expect_null(tse@referenceSeq)
 })
@@ -352,7 +352,7 @@ test_that("`.parse_taxonomy` work with any combination of taxonomic ranks", {
 })
 
 test_that("`.read_q2sample_meta` remove  the row contained `#q2:types`", {
-    expect_false(any(as(.read_q2sample_meta(sampleMetaFile), "matrix") == "#q2:types"))
+    expect_false(any(as(.read_q2sample_meta(sample.meta.file), "matrix") == "#q2:types"))
 })
 
 test_that('get file extension', {
@@ -362,24 +362,24 @@ test_that('get file extension', {
 
 test_that('read qza file', {
     expect_error(readQZA("abc"), "does not exist")
-    expect_error(readQZA(sampleMetaFile), "must be in `qza` format")
+    expect_error(readQZA(sample.meta.file), "must be in `qza` format")
 })
 
 test_that("Confidence of taxa is numberic", {
     skip_if_not(require("biomformat", quietly = TRUE))
     tse <- loadFromQIIME2(
-        featureTableFile,
-        taxonomyTableFile = taxonomyTableFile
+        feature.table.file,
+        taxonomy.table.file = taxonomy.table.file
     )
     expect_true(is.numeric(S4Vectors::mcols(tse)$Confidence))
 })
 
 test_that("dimnames of feature table is identicle with meta data", {
    skip_if_not(require("biomformat", quietly = TRUE))
-   feature_tab <- readQZA(featureTableFile)
+   feature_tab <- readQZA(feature.table.file)
    
-   sample_meta <- .read_q2sample_meta(sampleMetaFile)
-   taxa_meta <- readQZA(taxonomyTableFile)
+   sample_meta <- .read_q2sample_meta(sample.meta.file)
+   taxa_meta <- readQZA(taxonomy.table.file)
    taxa_meta <- .subset_taxa_in_feature(taxa_meta, feature_tab)
    new_feature_tab <- .set_feature_tab_dimnames(
        feature_tab, 
@@ -445,7 +445,7 @@ test_that("makePhyloseqFromTreeSE", {
     
     # Test with agglomeration that that pruning is done internally
     test1 <- agglomerateByRank(tse, rank = "Phylum")
-    test2 <- expect_warning(agglomerateByRank(tse, rank = "Phylum", agglomerateTree = TRUE))
+    test2 <- expect_warning(agglomerateByRank(tse, rank = "Phylum", agglomerate.tree = TRUE))
     test1_phy <- expect_warning(makePhyloseqFromTreeSE(test1))
     test2_phy <- makePhyloseqFromTreeSE(test2)
     

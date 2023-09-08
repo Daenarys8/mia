@@ -34,7 +34,14 @@
 \usage{
 getPrevalence(x, ...)
 
-\S4method{getPrevalence}{ANY}(x, detection = 0, include_lowest = FALSE, sort = FALSE, ...)
+\S4method{getPrevalence}{ANY}(
+  x,
+  detection = 0,
+  include_lowest = FALSE,
+  include.lowest = include_lowest,
+  sort = FALSE,
+  ...
+)
 
 \S4method{getPrevalence}{SummarizedExperiment}(
   x,
@@ -47,13 +54,13 @@ getPrevalence(x, ...)
 
 getPrevalentFeatures(x, ...)
 
-\S4method{getPrevalentFeatures}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
+\S4method{getPrevalentFeatures}{ANY}(x, prevalence = 50/100, include.lowest = FALSE, ...)
 
 \S4method{getPrevalentFeatures}{SummarizedExperiment}(
   x,
   rank = NULL,
   prevalence = 50/100,
-  include_lowest = FALSE,
+  include.lowest = FALSE,
   ...
 )
 
@@ -63,13 +70,13 @@ getPrevalentTaxa(x, ...)
 
 getRareFeatures(x, ...)
 
-\S4method{getRareFeatures}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
+\S4method{getRareFeatures}{ANY}(x, prevalence = 50/100, include.lowest = FALSE, ...)
 
 \S4method{getRareFeatures}{SummarizedExperiment}(
   x,
   rank = NULL,
   prevalence = 50/100,
-  include_lowest = FALSE,
+  include.lowest = FALSE,
   ...
 )
 
@@ -117,13 +124,14 @@ mergeFeaturesByPrevalence(x, ...)
   x,
   rank = taxonomyRanks(x)[1L],
   other_label = "Other",
+  other.label = other_label,
   ...
 )
 
 \S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1L],
-  other_label = "Other",
+  other.label = "Other",
   ...
 )
 }
@@ -150,6 +158,9 @@ absolute value compared directly to the values of \code{x} or a relative
 value between 0 and 1, if \code{as_relative = FALSE}.}
 
 \item{include_lowest}{logical scalar: Should the lower boundary of the
+detection and prevalence cutoffs be included? (default: \code{FALSE})(Alias for include.lowest. Please use include.lowest instead)}
+
+\item{include.lowest}{logical scalar: Should the lower boundary of the
 detection and prevalence cutoffs be included? (default: \code{FALSE})}
 
 \item{sort}{logical scalar: Should the result be sorted by prevalence?
@@ -172,10 +183,13 @@ on compositional (relative) abundances? (default: \code{FALSE})}
 
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
-limit, set \code{include_lowest} to \code{TRUE}.}
+limit, set \code{include.lowest} to \code{TRUE}.}
 
 \item{other_label}{A single \code{character} valued used as the label for the
-summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
+summary of non-prevalent taxa. (default: \code{other_label = "Other"})(Alias for other.label. Please use other.label instead)}
+
+\item{other.label}{A single \code{character} valued used as the label for the
+summary of non-prevalent taxa. (default: \code{other.label = "Other"})}
 }
 \value{
 \code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return subset of \code{x}.

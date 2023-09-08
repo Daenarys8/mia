@@ -5,8 +5,8 @@ test_that("getPrevalence", {
     data(GlobalPatterns, package="mia")
     expect_error(getPrevalence(GlobalPatterns, detection="test"),
                  "'detection' must be a single numeric value or coercible to one")
-    expect_error(getPrevalence(GlobalPatterns, include_lowest="test"),
-                 "'include_lowest' must be TRUE or FALSE")
+    expect_error(getPrevalence(GlobalPatterns, include.lowest="test"),
+                 "'include.lowest' must be TRUE or FALSE")
     expect_error(getPrevalence(GlobalPatterns, sort="test"),
                  "'sort' must be TRUE or FALSE")
     expect_error(getPrevalence(GlobalPatterns, as_relative="test"),
@@ -20,13 +20,13 @@ test_that("getPrevalence", {
     expect_true(min(pr) >= 0 && max(pr) <= 1)
 
     # Same prevalences should be returned for as_relative T/F in certain cases.
-    pr1 <- getPrevalence(GlobalPatterns, detection=1, include_lowest=TRUE, as_relative=FALSE)
-    pr2 <- getPrevalence(GlobalPatterns, detection=0/100, include_lowest=FALSE, as_relative=TRUE)
+    pr1 <- getPrevalence(GlobalPatterns, detection=1, include.lowest=TRUE, as_relative=FALSE)
+    pr2 <- getPrevalence(GlobalPatterns, detection=0/100, include.lowest=FALSE, as_relative=TRUE)
     expect_true(all(pr1 == pr2))
 
     # Same prevalences should be returned for as_relative T/F in certain cases.
-    pr1 <- getPrevalence(GlobalPatterns, detection=1, include_lowest=TRUE, as_relative=FALSE)
-    pr2 <- getPrevalence(GlobalPatterns, detection=0, include_lowest=FALSE, as_relative=FALSE)
+    pr1 <- getPrevalence(GlobalPatterns, detection=1, include.lowest=TRUE, as_relative=FALSE)
+    pr2 <- getPrevalence(GlobalPatterns, detection=0, include.lowest=FALSE, as_relative=FALSE)
     expect_true(all(pr1 == pr2))
 
     # Different ways to use relative abundance should yield the same output
@@ -38,7 +38,7 @@ test_that("getPrevalence", {
     # Sorting should put the top values first
     pr <- getPrevalence(GlobalPatterns, sort=TRUE, detection = 0.1/100)
     expect_equal(as.vector(which.max(pr)), 1)
-    pr <- names(head(getPrevalence(GlobalPatterns, sort=TRUE,  include_lowest = TRUE), 5L))
+    pr <- names(head(getPrevalence(GlobalPatterns, sort=TRUE,  include.lowest = TRUE), 5L))
     actual <- getTopFeatures(GlobalPatterns,
                          method="prevalence",
                          top=5,
@@ -131,12 +131,12 @@ test_that("getRareFeatures", {
     prevalent_taxa <- getPrevalentFeatures(GlobalPatterns,
                                        detection = 0,
                                        prevalence = 90/100,
-                                       include_lowest = FALSE)
+                                       include.lowest = FALSE)
     # Gets rare taxa
     rare_taxa <- getRareFeatures(GlobalPatterns,
                              detection = 0,
                              prevalence = 90/100,
-                             include_lowest = FALSE)
+                             include.lowest = FALSE)
 
     # Concatenates prevalent and rare taxa
     prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
@@ -173,13 +173,13 @@ test_that("getRareFeatures", {
                                            prevalence = 0.05,
                                            detection = 0.1,
                                            rank = rank,
-                                           include_lowest = TRUE, as_relative = TRUE)
+                                           include.lowest = TRUE, as_relative = TRUE)
         # Gets rare taxa
         rare_taxa <- getRareFeatures(GlobalPatterns,
                                  prevalence = 0.05,
                                  detection = 0.1,
                                  rank = rank,
-                                 include_lowest = TRUE, as_relative = TRUE)
+                                 include.lowest = TRUE, as_relative = TRUE)
 
         # Concatenates prevalent and rare taxa
         prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
@@ -327,8 +327,8 @@ test_that("subsetByRareFeatures", {
 test_that("mergeFeaturesByPrevalence", {
 
     data(GlobalPatterns, package="mia")
-    expect_error(mergeFeaturesByPrevalence(GlobalPatterns, other_label=TRUE),
-                 "'other_label' must be a single character value")
+    expect_error(mergeFeaturesByPrevalence(GlobalPatterns, other.label=TRUE),
+                 "'other.label' must be a single character value")
     actual <- mergeFeaturesByPrevalence(GlobalPatterns)
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(2,26))
@@ -338,7 +338,7 @@ test_that("mergeFeaturesByPrevalence", {
                                       detection = 1/100,
                                       prevalence = 50/100,
                                       as_relative = TRUE,
-                                      other_label = "test")
+                                      other.label = "test")
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(6,26))
     expect_equal(rowData(actual)[6,"Phylum"],"test")
@@ -348,19 +348,19 @@ test_that("mergeFeaturesByPrevalence", {
                                       detection = 0.0001,
                                       prevalence = 50/100,
                                       as_relative = TRUE,
-                                      other_label = "test")
+                                      other.label = "test")
     expect_equal(mergeFeaturesByPrevalence(GlobalPatterns,
                                            rank = NULL,
                                            detection = 0.0001,
                                            prevalence = 50/100,
                                            as_relative = TRUE,
-                                           other_label = "test"),
+                                           other.label = "test"),
                  mergeFeaturesByPrevalence(GlobalPatterns,
                                            rank = NULL,
                                            detection = 0.0001,
                                            prevalence = 50/100,
                                            as_relative = TRUE,
-                                           other_label = "test"))
+                                           other.label = "test"))
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(6,26))
     expect_true(all(is.na(rowData(actual)[6,])))

@@ -18,7 +18,7 @@
   ...
 )
 
-runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x))
+runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x), chunk.size = chunkSize)
 }
 \arguments{
 \item{x}{a numeric matrix or a
@@ -46,7 +46,11 @@ object specifying whether the JSD calculation should be parallelized.}
 
 \item{chunkSize}{an integer scalar, defining the size of data send
 to the individual worker. Only has an effect, if \code{BPPARAM} defines
-more than one worker. (default: \code{chunkSize = nrow(x)})}
+more than one worker. (default: \code{chunkSize = nrow(x)})(Alias for chunk.size. Please use chunk.size instead)}
+
+\item{chunk.size}{an integer scalar, defining the size of data send
+to the individual worker. Only has an effect, if \code{BPPARAM} defines
+more than one worker. (default: \code{chunk.size = nrow(x)})}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.

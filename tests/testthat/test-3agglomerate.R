@@ -31,8 +31,8 @@ test_that("agglomerate", {
                  "'rank' must be an non empty single character value")
     expect_error(mergeFeaturesByRank(xtse,"Family",na.rm=""),
                  "'na.rm' must be TRUE or FALSE")
-    expect_error(mergeFeaturesByRank(xtse,"Family",na.rm=FALSE,agglomerateTree=""),
-                 "'agglomerateTree' must be TRUE or FALSE")
+    expect_error(mergeFeaturesByRank(xtse,"Family",na.rm=FALSE,agglomerate.tree=""),
+                 "'agglomerate.tree' must be TRUE or FALSE")
     xtse2 <- xtse
     rowData(xtse2) <- NULL
     expect_error(mergeFeaturesByRank(xtse2,"Family",na.rm=FALSE),
@@ -75,7 +75,7 @@ test_that("agglomerate", {
     expect_equal(length(rowTree(actual)$tip.label),
                  603)
     actual <- expect_warning(mergeFeaturesByRank(se, rank = "Family",
-                                               agglomerateTree = TRUE))
+                                               agglomerate.tree = TRUE))
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
                  496)

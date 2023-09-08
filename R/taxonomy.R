@@ -583,13 +583,13 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment rowData
-.get_tax_groups <- function(x, col, onRankOnly = FALSE){
+.get_tax_groups <- function(x, col, on.rank.only = FALSE){
     tax_cols <- .get_tax_cols_from_se(x)
     tax_col_n <- seq_along(tax_cols)
     if(length(tax_col_n) < col){
         stop(".")
     }
-    if(onRankOnly){
+    if(on.rank.only){
         groups <- rowData(x)[,tax_cols[tax_col_n == col],drop=TRUE]
     } else {
         groups <- rowData(x)[,tax_cols[tax_col_n <= col],drop=FALSE]

@@ -7,11 +7,17 @@
 \usage{
 loadFromQIIME2(
   featureTableFile,
+  feature.table.file,
   taxonomyTableFile = NULL,
+  taxonomy.table.file = taxonomyTableFile,
   sampleMetaFile = NULL,
+  sample.meta.file = sampleMetaFile,
   featureNamesAsRefSeq = TRUE,
+  feature.names.as.ref.seq = TRUE,
   refSeqFile = NULL,
+  ref.seq.file = refSeqFile,
   phyTreeFile = NULL,
+  phy.tree.file = phyTreeFile,
   ...
 )
 
@@ -19,28 +25,52 @@ readQZA(file, temp = tempdir(), ...)
 }
 \arguments{
 \item{featureTableFile}{a single \code{character} value defining the file
+path of the feature table to be imported.(Alias for feature.table.file. Please use feature.table.file instead)}
+
+\item{feature.table.file}{a single \code{character} value defining the file
 path of the feature table to be imported.}
 
 \item{taxonomyTableFile}{a single \code{character} value defining the file
 path of the taxonomy table to be imported. (default:
-\code{taxonomyTableFile = NULL}).}
+\code{taxonomyTableFile = NULL}).(Alias for taxonomy.table.file. Please use taxonomy.table.file instead)}
+
+\item{taxonomy.table.file}{a single \code{character} value defining the file
+path of the taxonomy table to be imported. (default:
+\code{taxonomy.table.file = NULL}).}
 
 \item{sampleMetaFile}{a single \code{character} value defining the file path
 of the sample metadata to be imported. The file has to be in tsv format.
-(default: \code{sampleMetaFile = NULL}).}
+(default: \code{sampleMetaFile = NULL}).(Alias for taxonomy.table.file. Please use taxonomy.table.file instead)}
+
+\item{sample.meta.file}{a single \code{character} value defining the file path
+of the sample metadata to be imported. The file has to be in tsv format.
+(default: \code{sample.meta.file = NULL}).}
 
 \item{featureNamesAsRefSeq}{\code{TRUE} or \code{FALSE}: Should the feature
 names of the feature table be regarded as reference sequences? This setting
-will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
+will be disregarded, if \code{ref.seq.file} is not \code{NULL}. If the
+feature names do not contain valid DNA characters only, the reference
+sequences will not be set.(Alias for feature.names.as.ref.seq. Please use feature.names.as.ref.seq instead)}
+
+\item{feature.names.as.ref.seq}{\code{TRUE} or \code{FALSE}: Should the feature
+names of the feature table be regarded as reference sequences? This setting
+will be disregarded, if \code{ref.seq.file} is not \code{NULL}. If the
 feature names do not contain valid DNA characters only, the reference
 sequences will not be set.}
 
 \item{refSeqFile}{a single \code{character} value defining the file path of
-the reference sequences for each feature. (default: \code{refSeqFile =
+the reference sequences for each feature. (default: \code{ref.seq.file =
+  NULL}).(Alias for ref.seq.file. Please use ref.seq.file instead)}
+
+\item{ref.seq.file}{a single \code{character} value defining the file path of
+the reference sequences for each feature. (default: \code{ref.seq.file =
   NULL}).}
 
 \item{phyTreeFile}{a single \code{character} value defining the file path of
-the phylogenetic tree. (default: \code{phyTreeFile = NULL}).}
+the phylogenetic tree. (default: \code{phy.tree.file = NULL}).(Alias for phy.tree.file. Please use phy.tree.file instead)}
+
+\item{phy.tree.file}{a single \code{character} value defining the file path of
+the phylogenetic tree. (default: \code{phy.tree.file = NULL}).}
 
 \item{...}{additional arguments:
 \itemize{
@@ -72,42 +102,42 @@ object
 \description{
 Results exported from QIMME2 can be imported as a
 \code{TreeSummarizedExperiment} using \code{loadFromQIIME2}. Except for the
-\code{featureTableFile}, the other data types, \code{taxonomyTableFile},
-\code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
+\code{feature.table.file}, the other data types, \code{taxonomy.table.file},
+\code{ref.seq.file} and \code{phy.tree.file}, are optional, but are highly
 encouraged to be provided.
 
 Import the QIIME2 artifacts to R.
 }
 \details{
-Both arguments \code{featureNamesAsRefSeq} and \code{refSeqFile} can be used
-to define reference sequences of features. \code{featureNamesAsRefSeq} is
-only taken into account, if \code{refSeqFile} is \code{NULL}. No reference
+Both arguments \code{feature.names.as.ref.seq } and \code{ref.seq.file} can be used
+to define reference sequences of features. \code{feature.names.as.ref.seq } is
+only taken into account, if \code{ref.seq.file} is \code{NULL}. No reference
 sequences are tried to be created, if \code{featureNameAsRefSeq} is
-\code{FALSE} and \code{refSeqFile} is \code{NULL}.
+\code{FALSE} and \code{ref.seq.file} is \code{NULL}.
 }
 \examples{
-featureTableFile <- system.file("extdata", "table.qza", package = "mia")
-taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
-sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
-phyTreeFile <- system.file("extdata", "tree.qza", package = "mia")
-refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
+feature.table.file <- system.file("extdata", "table.qza", package = "mia")
+taxonomy.table.file <- system.file("extdata", "taxonomy.qza", package = "mia")
+sample.meta.file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+phy.tree.file <- system.file("extdata", "tree.qza", package = "mia")
+ref.seq.file <- system.file("extdata", "refseq.qza", package = "mia")
 tse <- loadFromQIIME2(
-  featureTableFile = featureTableFile,
-  taxonomyTableFile = taxonomyTableFile,
-  sampleMetaFile = sampleMetaFile,
-  refSeqFile = refSeqFile,
-  phyTreeFile = phyTreeFile
+  feature.table.file = feature.table.file,
+  taxonomy.table.file = taxonomy.table.file,
+  sample.meta.file = sample.meta.file,
+  ref.seq.file = ref.seq.file,
+  phy.tree.file = phy.tree.file
 )
 
 tse
 # Read individual files
-featureTableFile <- system.file("extdata", "table.qza", package = "mia")
-taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
-sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+feature.table.file <- system.file("extdata", "table.qza", package = "mia")
+taxonomy.table.file <- system.file("extdata", "taxonomy.qza", package = "mia")
+sample.meta.file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 
-assay <- readQZA(featureTableFile)
-rowdata <- readQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
-coldata <- read.table(sampleMetaFile, header = TRUE, sep = "\t", comment.char = "")
+assay <- readQZA(feature.table.file)
+rowdata <- readQZA(taxonomy.table.file, removeTaxaPrefixes = TRUE)
+coldata <- read.table(sample.meta.file, header = TRUE, sep = "\t", comment.char = "")
 
 # Assign rownames 
 rownames(coldata) <- coldata[, 1]

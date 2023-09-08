@@ -19,7 +19,8 @@ mergeFeaturesByRank(x, ...)
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  onRankOnly = FALSE,
+  OnRankOnly = FALSE,
+  on.rank.only = OnRankOnly,
   na.rm = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
@@ -28,7 +29,7 @@ mergeFeaturesByRank(x, ...)
 \S4method{mergeFeaturesByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  onRankOnly = FALSE,
+  on.rank.only = FALSE,
   na.rm = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
@@ -38,9 +39,14 @@ mergeFeaturesByRank(x, ...)
 
 \S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
-\S4method{agglomerateByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
+\S4method{agglomerateByRank}{TreeSummarizedExperiment}(
+  x,
+  ...,
+  agglomerateTree = FALSE,
+  agglomerate.tree = agglomerateTree
+)
 
-\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
+\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerate.tree = FALSE)
 }
 \arguments{
 \item{x}{a
@@ -62,9 +68,9 @@ whether to make rownames unique. (By default: \code{make_unique = TRUE})}
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
-\item{onRankOnly}{\code{TRUE} or \code{FALSE}: Should information only from
+\item{on.rank.only}{\code{TRUE} or \code{FALSE}: Should information only from
 the specified rank be used or from ranks equal and above? See details.
-(default: \code{onRankOnly = FALSE})}
+(default: \code{on.rank.only = FALSE})}
 
 \item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
 removed? Use it with caution, since empty entries on the selected rank
@@ -85,7 +91,15 @@ nested alternative experiments by default (default:
 
 \item{agglomerateTree}{\code{TRUE} or \code{FALSE}: should
 \code{rowTree()} also be agglomerated? (Default:
-\code{agglomerateTree = FALSE})}
+\code{agglomerateTree = FALSE})(Alias for agglomerate.tree. Please use agglomerate.tree instead)}
+
+\item{agglomerate.tree}{\code{TRUE} or \code{FALSE}: should
+\code{rowTree()} also be agglomerated? (Default:
+\code{agglomerate.tree = FALSE})}
+
+\item{onRankOnly}{\code{TRUE} or \code{FALSE}: Should information only from
+the specified rank be used or from ranks equal and above? See details.
+(default: \code{onRankOnly = FALSE})(Alias for on.rank.only. Please use on.rank.only instead)}
 }
 \value{
 A taxonomically-agglomerated, optionally-pruned object of the same
@@ -98,7 +112,7 @@ to certain taxonomic ranks given as \code{rowData}. Only available
 }
 \details{
 Based on the available taxonomic data and its structure setting
-\code{onRankOnly = TRUE} has certain implications on the interpretability of
+\code{on.rank.only = TRUE} has certain implications on the interpretability of
 your results. If no loops exist (loops meaning two higher ranks containing
 the same lower rank), the results should be comparable. you can check for
 loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
@@ -122,7 +136,7 @@ nrow(x1)
 
 # with agglomeration of the tree
 x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-                       agglomerateTree = TRUE)
+                       agglomerate.tree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree

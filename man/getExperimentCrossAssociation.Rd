@@ -26,17 +26,25 @@ getExperimentCrossAssociation(x, ...)
   altexp2 = NULL,
   colData_variable1 = NULL,
   colData_variable2 = NULL,
+  colData.variable1 = colData_variable1,
+  colData.variable2 = colData_variable2,
   MARGIN = 1,
   method = c("kendall", "spearman", "categorical", "pearson"),
   mode = "table",
   p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel", "none"),
+  p.adj.method = p_adj_method,
   p_adj_threshold = NULL,
+  p.adj.threshold = p_adj_threshold,
   cor_threshold = NULL,
+  cor.threshold = cor_threshold,
   sort = FALSE,
   filter_self_correlations = FALSE,
+  filter.self.correlations = filter_self_correlations,
   verbose = TRUE,
   test_significance = FALSE,
+  test.significance = test_significance,
   show_warnings = TRUE,
+  show.warnings = show_warnings,
   paired = FALSE,
   ...
 )
@@ -115,11 +123,19 @@ and altExp option is disabled.
 
 \item{colData_variable1}{A character value specifying column(s) from colData
 of experiment 1. If colData_variable1 is used, assay.type1 is disabled.
-(By default: \code{colData_variable1 = NULL})}
+(By default: \code{colData_variable1 = NULL})(Alias for colData.variable1. Please use colData.variable1 instead)}
 
 \item{colData_variable2}{A character value specifying column(s) from colData
 of experiment 2. If colData_variable2 is used, assay.type2 is disabled.
-(By default: \code{colData_variable2 = NULL})}
+(By default: \code{colData_variable2 = NULL})(Alias for colData.variable2. Please use colData.variable2 instead)}
+
+\item{colData.variable1}{A character value specifying column(s) from colData
+of experiment 1. If colData.variable1 is used, assay.type1 is disabled.
+(By default: \code{colData.variable1 = NULL})}
+
+\item{colData.variable2}{A character value specifying column(s) from colData
+of experiment 2. If colData.variable2 is used, assay.type2 is disabled.
+(By default: \code{colData.variable2 = NULL})}
 
 \item{MARGIN}{A single numeric value for selecting if association are calculated
 row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -134,13 +150,25 @@ Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"}
 
 \item{p_adj_method}{A single character value for selecting adjustment method of
 p-values. Passed to \code{p.adjust} function.
-(By default: \code{p_adj_method = "fdr"})}
+(By default: \code{p_adj_method = "fdr"})(Alias for p.adj.method. Please use p.adj.method instead)}
+
+\item{p.adj.method}{A single character value for selecting adjustment method of
+p-values. Passed to \code{p.adjust} function.
+(By default: \code{p.adj.method = "fdr"})}
 
 \item{p_adj_threshold}{A single numeric value (from 0 to  1) for selecting
 adjusted p-value threshold for filtering.
-(By default: \code{p_adj_threshold = NULL})}
+(By default: \code{p_adj_threshold = NULL})Alias for p.adj.threshold. Please use p.adj.threshold instead}
+
+\item{p.adj.threshold}{A single numeric value (from 0 to  1) for selecting
+adjusted p-value threshold for filtering.
+(By default: \code{p.adj.threshold = NULL})}
 
 \item{cor_threshold}{A single numeric absolute value (from 0 to 1) for selecting
+correlation threshold for filtering.
+(By default: \code{cor.threshold = NULL})(Alias for cor.threshold. Please use cor.threshold instead)}
+
+\item{cor.threshold}{A single numeric absolute value (from 0 to 1) for selecting
 correlation threshold for filtering.
 (By default: \code{cor_threshold = NULL})}
 
@@ -151,15 +179,26 @@ in result matrices. Used method is hierarchical clustering.
 \item{filter_self_correlations}{A single boolean value for selecting whether to
 filter out correlations between identical items. Applies only when correlation
 between experiment itself is tested, i.e., when assays are identical.
-(By default: \code{filter_self_correlations = FALSE})}
+(By default: \code{filter_self_correlations = FALSE})(Alias for filter.self.correlations. Please use filter.self.correlations instead)}
+
+\item{filter.self.correlations}{A single boolean value for selecting whether to
+filter out correlations between identical items. Applies only when correlation
+between experiment itself is tested, i.e., when assays are identical.
+(By default: \code{filter.self.correlations = FALSE})}
 
 \item{verbose}{A single boolean value for selecting whether to get messages
 about progress of calculation.}
 
 \item{test_significance}{A single boolean value for selecting whether to test
+statistical significance of associations.(Alias for test.significance. Please use test.significance instead)}
+
+\item{test.significance}{A single boolean value for selecting whether to test
 statistical significance of associations.}
 
 \item{show_warnings}{A single boolean value for selecting whether to show warnings
+that might occur when correlations and p-values are calculated.(Alias for show.warnings. Please use show.warnings instead)}
+
+\item{show.warnings}{A single boolean value for selecting whether to show warnings
 that might occur when correlations and p-values are calculated.}
 
 \item{paired}{A single boolean value for specifying if samples are paired or not.
@@ -215,22 +254,22 @@ result <- getExperimentCrossAssociation(mae, experiment2 = 2,
 head(result, 5)
 
 # testExperimentCorrelation returns also significances
-# filter_self_correlations = TRUE filters self correlations
-# With p_adj_threshold it is possible to filter those features that do no have
+# filter.self.correlations = TRUE filters self correlations
+# With p.adj.threshold it is possible to filter those features that do no have
 # any correlations that have p-value under threshold
 result <- testExperimentCrossAssociation(mae[[1]], experiment2 = mae[[1]], method = "pearson",
-                                         filter_self_correlations = TRUE,
-                                         p_adj_threshold = 0.05)
+                                         filter.self.correlations = TRUE,
+                                         p.adj.threshold = 0.05)
 # Show first 5 entries
 head(result, 5)
 
 # Also getExperimentCrossAssociation returns significances when 
 # test_signicance = TRUE
-# Warnings can be suppressed by using show_warnings = FALSE
+# Warnings can be suppressed by using show.warnings = FALSE
 result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
                                         assay.type2 = "nmr",
-                                        mode = "matrix", test_significance = TRUE,
-                                        show_warnings = FALSE)
+                                        mode = "matrix", test.significance = TRUE,
+                                        show.warnings = FALSE)
                                         
 # Returned value is a list of matrices
 names(result)
@@ -264,7 +303,7 @@ mae[[1]] <- estimateDiversity(mae[[1]])
 # named assay.type from assay slot, it fetches a column named colData_variable
 # from colData.
 result <- getExperimentCrossAssociation(mae[[1]], assay.type1 = "counts", 
-                                        colData_variable2 = c("shannon", "coverage"))
+                                        colData.variable2 = c("shannon", "coverage"))
                                         
 }
 \author{

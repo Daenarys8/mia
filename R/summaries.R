@@ -140,7 +140,7 @@ setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
         #
         if(method == "prevalence"){
             taxs <- getPrevalence(assay(x, assay.type), sort = TRUE,
-                                  include_lowest = TRUE, ...)
+                                  include.lowest = TRUE, ...)
             # If there are taxa with prevalence of 0, remove them
             taxs <- taxs[ taxs > 0 ]
         } else {

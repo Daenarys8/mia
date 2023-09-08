@@ -4,22 +4,43 @@
 \alias{loadFromMothur}
 \title{Import Mothur results as a \code{TreeSummarizedExperiment}}
 \usage{
-loadFromMothur(sharedFile, taxonomyFile = NULL, designFile = NULL)
+loadFromMothur(
+  shared.file,
+  sharedFile,
+  taxonomy_file = NULL,
+  taxonomy.file = taxonomy_file,
+  designFile = NULL,
+  design.file = designFile
+)
 }
 \arguments{
-\item{sharedFile}{a single \code{character} value defining the file
+\item{shared.file}{a single \code{character} value defining the file
 path of the feature table to be imported. The File has to be in
 \code{shared file} format as defined in Mothur documentation.}
 
-\item{taxonomyFile}{a single \code{character} value defining the file path of
+\item{sharedFile}{a single \code{character} value defining the file
+path of the feature table to be imported. The File has to be in
+\code{shared file} format as defined in Mothur documentation.(Alias for shared.file. Please use shared.file instead)}
+
+\item{taxonomy.file}{a single \code{character} value defining the file path of
 the taxonomy table to be imported. The File has to be in \code{taxonomy
   file} or \code{constaxonomy file} format  as defined in Mothur
-documentation. (default: \code{taxonomyFile = NULL}).}
+documentation. (default: \code{taxonomy.file = NULL}).}
 
 \item{designFile}{a single \code{character} value defining the file path of
-the sample metadata to be imported. The File has to be in \code{desing
+the sample metadata to be imported. The File has to be in \code{design
   file} format as defined in Mothur documentation. (default: \code{designFile
+  = NULL}).(Alias for design.file. Please use design.file instead)}
+
+\item{design.file}{a single \code{character} value defining the file path of
+the sample metadata to be imported. The File has to be in \code{design
+  file} format as defined in Mothur documentation. (default: \code{design.file
   = NULL}).}
+
+\item{taxonomyfile}{a single \code{character} value defining the file path of
+the taxonomy table to be imported. The File has to be in \code{taxonomy
+  file} or \code{constaxonomy file} format  as defined in Mothur
+documentation. (default: \code{taxonomyFile = NULL}).(Alias for taxonomy.file. Please use taxonomy.file instead)}
 }
 \value{
 A
@@ -33,8 +54,8 @@ files provided as input.
 \details{
 Results exported from Mothur can be imported as a
 \code{SummarizedExperiment} using \code{loadFromMothur}. Except for the
-\code{sharedFile}, the other data types, \code{taxonomyFile}, and
-\code{designFile}, are optional, but are highly encouraged to be provided.
+\code{shared.file}, the other data types, \code{taxonomy.file}, and
+\code{design.file}, are optional, but are highly encouraged to be provided.
 }
 \examples{
 # Abundance table

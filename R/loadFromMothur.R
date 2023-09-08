@@ -2,26 +2,40 @@
 #' 
 #' This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
 #' files provided as input. 
-#'
+#' 
 #' @param sharedFile a single \code{character} value defining the file
 #'   path of the feature table to be imported. The File has to be in 
-#'   \code{shared file} format as defined in Mothur documentation.
+#'   \code{shared file} format as defined in Mothur documentation.(Alias for shared.file. Please use shared.file instead)
 #'
-#' @param taxonomyFile a single \code{character} value defining the file path of
+#' @param shared.file a single \code{character} value defining the file
+#'   path of the feature table to be imported. The File has to be in 
+#'   \code{shared file} format as defined in Mothur documentation.
+#'   
+#' @param taxonomyfile a single \code{character} value defining the file path of
 #'   the taxonomy table to be imported. The File has to be in \code{taxonomy
 #'   file} or \code{constaxonomy file} format  as defined in Mothur
-#'   documentation. (default: \code{taxonomyFile = NULL}).
+#'   documentation. (default: \code{taxonomyFile = NULL}).(Alias for taxonomy.file. Please use taxonomy.file instead)
 #'
+#' @param taxonomy.file a single \code{character} value defining the file path of
+#'   the taxonomy table to be imported. The File has to be in \code{taxonomy
+#'   file} or \code{constaxonomy file} format  as defined in Mothur
+#'   documentation. (default: \code{taxonomy.file = NULL}).
+#'   
 #' @param designFile a single \code{character} value defining the file path of
-#'   the sample metadata to be imported. The File has to be in \code{desing
+#'   the sample metadata to be imported. The File has to be in \code{design
 #'   file} format as defined in Mothur documentation. (default: \code{designFile
+#'   = NULL}).(Alias for design.file. Please use design.file instead)
+#'
+#' @param design.file a single \code{character} value defining the file path of
+#'   the sample metadata to be imported. The File has to be in \code{design
+#'   file} format as defined in Mothur documentation. (default: \code{design.file
 #'   = NULL}).
 #'
 #' @details
 #' Results exported from Mothur can be imported as a
 #' \code{SummarizedExperiment} using \code{loadFromMothur}. Except for the
-#' \code{sharedFile}, the other data types, \code{taxonomyFile}, and
-#' \code{designFile}, are optional, but are highly encouraged to be provided.
+#' \code{shared.file}, the other data types, \code{taxonomy.file}, and
+#' \code{design.file}, are optional, but are highly encouraged to be provided.
 #'
 #' @return  A
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -63,26 +77,29 @@ NULL
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom S4Vectors make_zero_col_DFrame
 #' @export
-loadFromMothur <- function(sharedFile,
-                           taxonomyFile = NULL,
-                           designFile = NULL) {
+loadFromMothur <- function(shared.file,
+                           sharedFile,
+                           taxonomy_file = NULL,
+                           taxonomy.file = taxonomy_file,
+                           designFile = NULL,
+                           design.file = designFile) {
 
     # input check
-    if(!.is_non_empty_string(sharedFile)){
-        stop("'sharedFile' must be a single character value.", 
+    if(!.is_non_empty_string(shared.file)){
+        stop("'shared.file' must be a single character value.", 
             call. = FALSE)
     }
-    if(!is.null(taxonomyFile) && !.is_non_empty_string(taxonomyFile)){
-        stop("'taxonomyFile' must be a single character value or NULL.", 
+    if(!is.null(taxonomy.file) && !.is_non_empty_string(taxonomy.file)){
+        stop("'taxonomy.file' must be a single character value or NULL.", 
             call. = FALSE)
     }
-    if(!is.null(designFile) && !.is_non_empty_string(designFile)){
-        stop("'designFile' must be a single character value or NULL.",
+    if(!is.null(design.file) && !.is_non_empty_string(design.file)){
+        stop("'design.file' must be a single character value or NULL.",
             call. = FALSE)
     }
     
-    # Reads the sharedFile 
-    feature_tab_and_data_to_colData <- .read_mothur_feature(sharedFile)
+    # Reads the shared.file 
+    feature_tab_and_data_to_colData <- .read_mothur_feature(shared.file)
     # Extracts feature_tab
     feature_tab <- feature_tab_and_data_to_colData$assay
     # Extracts data that goes to colData
@@ -90,8 +107,8 @@ loadFromMothur <- function(sharedFile,
     
     # If rowData information exists, gets that. Otherwise, tax_tab is just 
     # data.frame without information
-    if (!is.null(taxonomyFile)) {
-        taxa_tab <- .read_mothur_taxonomy(taxonomyFile, feature_tab)
+    if (!is.null(taxonomy.file)) {
+        taxa_tab <- .read_mothur_taxonomy(taxonomy.file, feature_tab)
     } else {
         taxa_tab <- S4Vectors::make_zero_col_DFrame(nrow(feature_tab))
         rownames(taxa_tab) <- rownames(feature_tab)
@@ -99,8 +116,8 @@ loadFromMothur <- function(sharedFile,
     
     # If colData informationor data_to_colData exists, gets that. Otherwise, 
     # sample_tab is just data frame without information
-    if (!is.null(designFile) && !is.null(data_to_colData)) {
-        sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData)
+    if (!is.null(design.file) && !is.null(data_to_colData)) {
+        sample_meta <- .read_mothur_sample_meta(design.file, data_to_colData)
     } else {
         sample_meta <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
         rownames(sample_meta) <- colnames(feature_tab)
@@ -113,16 +130,16 @@ loadFromMothur <- function(sharedFile,
 
 # These extra information must be added to colData. Return list of assay and 
 # extra info
-.read_mothur_feature <- function(sharedFile){
+.read_mothur_feature <- function(shared.file){
   
-    if (!.is_mothur_shared_file(sharedFile)) {
-        stop("The input '", sharedFile, "' must be in `shared` format.",
+    if (!.is_mothur_shared_file(shared.file)) {
+        stop("The input '", shared.file, "' must be in `shared` format.",
              call. = FALSE)
     }
   
     # Stores name of columns will be included in colData not in assays
     MOTHUR_NON_ASSAY_COLS <- c("label","numOtus","Group")
-    data <- read.table(sharedFile, check.names=FALSE, header=TRUE,
+    data <- read.table(shared.file, check.names=FALSE, header=TRUE,
                        sep="\t", stringsAsFactors=FALSE)
     # Checks that colnames contain information and it is not NULL
     if ( !(length(colnames(data)) > 0) || is.null(colnames(data)) ){
@@ -140,25 +157,25 @@ loadFromMothur <- function(sharedFile,
                 colData = colData))
 }
 
-.read_mothur_taxonomy <- function(taxonomyFile, feature_tab){
+.read_mothur_taxonomy <- function(taxonomy.file, feature_tab){
     
     # If the file is in "cons.taxonomy" format
-    if (.is_mothur_constaxonomy_file(taxonomyFile, feature_tab)) {
-        data <- read.table(taxonomyFile, check.names=FALSE,
+    if (.is_mothur_constaxonomy_file(taxonomy.file, feature_tab)) {
+        data <- read.table(taxonomy.file, check.names=FALSE,
                            header=TRUE, sep="\t", stringsAsFactors=FALSE)
     } 
     # If the file is in "taxonomy" format, adds column names
-    else if (.is_mothur_taxonomy_file(taxonomyFile, feature_tab)){
-        data <- read.table(taxonomyFile, check.names=FALSE,
+    else if (.is_mothur_taxonomy_file(taxonomy.file, feature_tab)){
+        data <- read.table(taxonomy.file, check.names=FALSE,
                            header=FALSE, sep="\t", 
                            stringsAsFactors=FALSE, 
                            col.names = c("OTU", "Taxonomy"))
     }
     # Else the file is not either gives an error
     else{
-        stop("The input '", taxonomyFile, "' must be provided in the ",
+        stop("The input '", taxonomy.file, "' must be provided in the ",
              "`taxonomy` or `cons.taxonomy` format. In addition, it must ",
-             "match the data of the 'sharedFile'",
+             "match the data of the 'shared.file'",
              call. = FALSE)
     }
   
@@ -192,17 +209,17 @@ loadFromMothur <- function(sharedFile,
     return(rowData)
 }
 
-.read_mothur_sample_meta <- function(designFile, data_to_colData){
+.read_mothur_sample_meta <- function(design.file, data_to_colData){
     # Checks if file is in "design" format. data_to_colData$Group includes 
-    # sample names that were extracted from assay, i.e. sharedFile
-    if (!.is_mothur_design_file(designFile, data_to_colData$Group)) {
-      stop("The input '", designFile, "' must be in `design` format, 
-           and it must inlude same sample names as 'sharedFile'.",
+    # sample names that were extracted from assay, i.e. shared.file
+    if (!.is_mothur_design_file(design.file, data_to_colData$Group)) {
+      stop("The input '", design.file, "' must be in `design` format, 
+           and it must inlude same sample names as 'shared.file'.",
            call. = FALSE)
     }
   
     # Reads the file
-    colData <- read.table(designFile, check.names=FALSE,
+    colData <- read.table(design.file, check.names=FALSE,
                           header=TRUE, sep="\t",
                           stringsAsFactors=FALSE)
     

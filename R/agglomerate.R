@@ -10,10 +10,14 @@
 #'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomyRanks()} function.
-#'
+#'   
 #' @param onRankOnly \code{TRUE} or \code{FALSE}: Should information only from
 #'   the specified rank be used or from ranks equal and above? See details.
-#'   (default: \code{onRankOnly = FALSE})
+#'   (default: \code{onRankOnly = FALSE})(Alias for on.rank.only. Please use on.rank.only instead)
+#'
+#' @param on.rank.only \code{TRUE} or \code{FALSE}: Should information only from
+#'   the specified rank be used or from ranks equal and above? See details.
+#'   (default: \code{on.rank.only = FALSE})
 #'
 #' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
 #'   removed? Use it with caution, since empty entries on the selected rank
@@ -23,10 +27,14 @@
 #' @param empty.fields a \code{character} value defining, which values should be
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 #'   removed if \code{na.rm = TRUE} before agglomeration.
-#'
+#'   
 #' @param agglomerateTree \code{TRUE} or \code{FALSE}: should
 #'   \code{rowTree()} also be agglomerated? (Default:
-#'   \code{agglomerateTree = FALSE})
+#'   \code{agglomerateTree = FALSE})(Alias for agglomerate.tree. Please use agglomerate.tree instead)
+#'
+#' @param agglomerate.tree \code{TRUE} or \code{FALSE}: should
+#'   \code{rowTree()} also be agglomerated? (Default:
+#'   \code{agglomerate.tree = FALSE})
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
@@ -50,7 +58,7 @@
 #'
 #' @details
 #' Based on the available taxonomic data and its structure setting
-#' \code{onRankOnly = TRUE} has certain implications on the interpretability of
+#' \code{on.rank.only = TRUE} has certain implications on the interpretability of
 #' your results. If no loops exist (loops meaning two higher ranks containing
 #' the same lower rank), the results should be comparable. you can check for
 #' loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
@@ -82,7 +90,7 @@
 #' 
 #' # with agglomeration of the tree
 #' x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-#'                        agglomerateTree = TRUE)
+#'                        agglomerate.tree = TRUE)
 #' nrow(x2) # same number of rows, but
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
@@ -153,7 +161,7 @@ setGeneric("mergeFeaturesByRank",
 #'
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
+    function(x, rank = taxonomyRanks(x)[1], OnRankOnly = FALSE, on.rank.only = OnRankOnly, na.rm = FALSE,
         empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
         if(nrow(x) == 0L){
@@ -164,8 +172,8 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             stop("'rank' must be an non empty single character value.",
                 call. = FALSE)
         }
-        if(!.is_a_bool(onRankOnly)){
-            stop("'onRankOnly' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(on.rank.only)){
+            stop("'on.rank.only' must be TRUE or FALSE.", call. = FALSE)
         }
         if(!.is_a_bool(na.rm)){
             stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
@@ -182,7 +190,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         tax_cols <- .get_tax_cols_from_se(x)
 
         # if na.rm is TRUE, remove the empty, white-space, NA values from
-        # tree will be pruned later, if agglomerateTree = TRUE
+        # tree will be pruned later, if agglomerate.tree = TRUE
         if( na.rm ){
             x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
                                                    empty.fields)
@@ -196,7 +204,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         }
 
         # get groups of taxonomy entries
-        tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
+        tax_factors <- .get_tax_groups(x, col = col, on.rank.only = on.rank.only)
 
         # merge taxa
         x <- mergeRows(x, f = tax_factors, ...)
@@ -227,10 +235,10 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #'
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
-          function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
+          function(x, rank = taxonomyRanks(x)[1], on.rank.only = FALSE, na.rm = FALSE,
                    empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
               .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
-              x <- agglomerateByRank(x, rank = rank, onRankOnly = onRankOnly, na.rm = na.rm,
+              x <- agglomerateByRank(x, rank = rank, on.rank.only = on.rank.only, na.rm = na.rm,
                                      empty.fields = empty.fields, ...)
               x
           }
@@ -272,10 +280,10 @@ setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, ..., agglomerateTree = FALSE){
+          function(x, ..., agglomerateTree = FALSE, agglomerate.tree = agglomerateTree){
               # input check
-              if(!.is_a_bool(agglomerateTree)){
-                  stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
+              if(!.is_a_bool(agglomerate.tree)){
+                  stop("'agglomerate.tree' must be TRUE or FALSE.", call. = FALSE)
               }
               # If there are multipe rowTrees, it might be that multiple
               # trees are preserved after agglomeration even though the dataset
@@ -289,7 +297,7 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
               # Agglomerate also tree, if the data includes only one
               # rowTree --> otherwise it is not possible to agglomerate
               # since all rownames are not found from individual tree.
-              if(agglomerateTree){
+              if(agglomerate.tree){
                   if( length(x@rowTree) > 1 ){
                       warning("The dataset includes multiple tree after ",
                               "agglomeration. Agglomeration of tree is not ",
@@ -306,9 +314,9 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
 #' @aliases agglomerateByRank
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, ..., agglomerateTree = FALSE){
+          function(x, ..., agglomerate.tree = FALSE){
               .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
-              x <- agglomerateByRank(x, ..., agglomerateTree = agglomerateTree)
+              x <- agglomerateByRank(x, ..., agglomerate.tree = agglomerate.tree)
               x
           }
 )

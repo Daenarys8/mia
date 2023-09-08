@@ -112,7 +112,7 @@ by default.
 ```{r}
 # with agglomeration of the tree
 x2 <- mergeFeaturesByRank(tse, rank = "Family",
-                        agglomerateTree = TRUE)
+                        agglomerate.tree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
